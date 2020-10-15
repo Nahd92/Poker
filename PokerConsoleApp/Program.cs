@@ -24,7 +24,7 @@ namespace Poker.ConsoleApp
 
         private static void OnShowAllHands()
         {
-            foreach(var player in game.Players)
+            foreach (var player in game.Players)
             {
                 UserInterface.ShowHand(player);
             }
@@ -47,12 +47,12 @@ namespace Poker.ConsoleApp
             if (!UserInterface.PresentStats(game.Players))
             {
                 if (Char.ToLower(
-                        UserInterface.WaitForKey("Spara spelet? [J/N]").KeyChar) 
+                        UserInterface.WaitForKey("Spara spelet? [J/N]").KeyChar)
                     == 'j')
                 {
                     game.SaveGameAndExit("savedgame.txt");
                 }
-                else 
+                else
                 {
                     game.Exit();
                 }
@@ -61,13 +61,13 @@ namespace Poker.ConsoleApp
 
         static void Main(string[] args)
         {
-            game = (File.Exists("savedgame.txt") 
+            game = (File.Exists("savedgame.txt")
                 && Char.ToLower(UserInterface.WaitForKey(
-                        "Ladda sparat spel? [J/N]").KeyChar) 
+                        "Ladda sparat spel? [J/N]").KeyChar)
                     == 'j')
                 ? Lib.GameFactory.LoadGame("savedgame.txt")
-                : Lib.GameFactory.NewGame(UserInterface.RegisterPlayers());           
-            
+                : Lib.GameFactory.NewGame(UserInterface.RegisterPlayers());
+
             game.NewDeal += OnNewDeal;
             game.SelectCardsToDiscard += OnSelectCardsToDiscard;
             game.RecievedReplacementCards += OnRecievedReplacementCards;
@@ -75,7 +75,9 @@ namespace Poker.ConsoleApp
             game.Winner += OnWinner;
             game.Draw += OnDraw;
 
-            game.RunGame();   
+            game.RunGame();
+
+            System.Console.WriteLine("Test");
         }
 
     }
