@@ -77,7 +77,6 @@ namespace Poker.ConsoleApp
 
             game.RunGame();
 
-            System.Console.WriteLine("Test");
         }
 
     }
