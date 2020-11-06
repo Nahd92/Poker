@@ -11,7 +11,7 @@ namespace Poker.ConsoleApp
         {
             UserInterface.Clear();
 
-            List<string> playerNames = new List<string>(); 
+            List<string> playerNames = new List<string>();
             while (true)
             {
                 string playerName = RegisterPlayer();
@@ -115,12 +115,12 @@ namespace Poker.ConsoleApp
         {
             WriteLine("Totalt antal vinster\n"
                 + "====================\n"
-                + String.Join(", ", 
+                + String.Join(", ",
                     from player in players
                     select $"{player.Name}: {player.Wins}"));
             return Char.ToLower(
-                    WaitForKey("[Enter] Fortsätt, [Q] Avsluta").KeyChar) != 
-                    'q'; 
+                    WaitForKey("[Enter] Fortsätt, [Q] Avsluta").KeyChar) !=
+                    'q';
         }
 
         static public void PresentWinner(IPlayer winner)
@@ -130,7 +130,7 @@ namespace Poker.ConsoleApp
 
         static public void DeclareDraw(IPlayer[] tiedPlayers)
         {
-            WriteLine("Oavgjort mellan: " + String.Join(", ", 
+            WriteLine("Oavgjort mellan: " + String.Join(", ",
                 from player in tiedPlayers select player.Name));
         }
 

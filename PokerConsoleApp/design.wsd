@@ -1,0 +1,178 @@
+@startuml
+
+left to right direction
+enum Suite
+{
+    {static} Clubs
+    {static} Diamonds
+    {static} Hearts
+    {static} Spades
+}
+enum Rank
+{
+    {static} Two = 2
+    {static} Three
+    {static} Four
+    {static} Five
+    {static} Six
+    {static} Seven
+    {static} Eight
+    {static} Nine
+    {static} Ten
+    {static} Jack
+    {static} Queen
+    {static} King
+    {static} Ace
+}
+enum HandType
+{
+    {static} HighCard
+    {static} Pair
+    {static} TwoPairs
+    {static} ThreeOfAKind
+    {static} Straight
+    {static} Flush
+    {static} FullHouse
+    {static} FourOfAKind
+    {static} StraightFlush
+    {static} RoyalStraightFlush
+}
+interface ICard
+{
+    + Suite Suite
+    + Rank Rank
+}
+ICard --* Rank
+ICard --* Suite
+interface IPlayer
+{
+    + string Name
+    + ICard[] Hand
+    + HandType HandType
+    + int Wins
+    + ICard[] Discard
+}
+IPlayer --o ICard
+IPlayer --* HandType
+interface IPokerGame
+{
+    IPlayer[] Players
+    void RunGame()
+    void SaveAndExit(string)
+    void Exit()
+    <<event>> NewDeal()
+    <<event>> SelectCardsToDiscard(IPlayer)
+    <<event>> RecievedReplacementCards(IPlayer)
+    <<event>> ShowAllHands()
+    <<event>> Winner(IPlayer)
+    <<event>> Draw(IPlayer[])
+}
+
+IPokerGame --o IPlayer
+class GameFactory
+{
+    {static} + IGame NewGame()
+    {static} + IGame LoadGame(string)
+}
+GameFactory --> PokerGame
+PokerGame ..|> IPokerGame
+CardCollection ..|> interfaces
+
+
+class PokerGame{
+    + IPlayer[] players
+    + void Exit()
+    + PokerGame(string fileName)
+    + PokerGame(string[] playerNames)
+    + void RunGame()
+    + void SaveGameAndExit()
+
+    + <<event>> OnNewDeal NewDeal
+    + <<event>> OnSelectCardsToDiscard SelectCardsToDiscard
+    + <<event>> OnRecievedReplacementCards RecievedReplacementCards
+    + <<event>> OnShowAllHands ShowAllHands
+    + <<event>> OnWinner Winner
+    + <<event>> OnDraw Draw
+}
+
+interface interfaces
+{
+IEnumerable
+IComparable
+}
+
+
+class CardCollection
+{
+# List<Card> cards;
++ virtual Add(Card card)
+# virtual Remove(Card card)
++ GetEnumerator()
++ void SortCard()
++ CompareTo()
++ TransferTo(CardCollection transferCard )
+}
+
+class Player {
++ Player()
+- Hand hand
++ string Name
++ ICard[] Hand 
++ HandType HandType
++ int wins
++ ICard[] Discard
++ void GetCard(Card car)
++ void DiscardCards(CardCollection discardPile)
+}
+
+class Dealer
+{
+- const int NumberOfCardsPerPlayer
+- Deck Deck
+- List<Player> Players
++ Dealer()
++ Card DealACard()
++ void GiveNewCards(Player player)
++ void CollectCards(CardCollection discardedCards, Player player)
+}
+
+
+Dealer o-- PokerGame
+CardCollection o- PokerGame
+CardCollection <|-- Deck
+CardCollection <|-- Hand
+CardCollection --*  Card 
+Player ..|> IPlayer
+Card ..|> ICard
+Player o-- PokerGame
+
+
+class Deck
+{
+- static Random rnd
+- int numberOfCards
++ Deck()
+- void SetUpDeck()
++ Card DrawCard()
++ void ShuffleCards()
+}
+
+
+class Card {
+ +Suite Suite 
+ +Rank Rank
+}
+
+class Hand{
++ HandType HandType
++ Hand()
++ int compareTo(Hand)
++ override Add()
++ override Remove()
+}
+
+
+
+
+@enduml 
+

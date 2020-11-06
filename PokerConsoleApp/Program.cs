@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Text;
+using Poker.Lib;
 
 namespace Poker.ConsoleApp
 {
@@ -61,12 +63,14 @@ namespace Poker.ConsoleApp
 
         static void Main(string[] args)
         {
+            Console.OutputEncoding = Encoding.UTF8;
             game = (File.Exists("savedgame.txt")
                 && Char.ToLower(UserInterface.WaitForKey(
                         "Ladda sparat spel? [J/N]").KeyChar)
                     == 'j')
                 ? Lib.GameFactory.LoadGame("savedgame.txt")
                 : Lib.GameFactory.NewGame(UserInterface.RegisterPlayers());
+
 
             game.NewDeal += OnNewDeal;
             game.SelectCardsToDiscard += OnSelectCardsToDiscard;
