@@ -80,10 +80,16 @@ CardCollection ..|> interfaces
 
 
 class PokerGame{
-    + IPlayer[] players
+    - List<Player> players
+    + IPlayer[] players 
+    - bool quit
     + void Exit()
+    + Pokergame()
     + PokerGame(string fileName)
     + PokerGame(string[] playerNames)
+    - CreatePlayers(string[] playerNames)
+    - SaveToFile(string FileName)
+    - LoadToFile(string fileName)
     + void RunGame()
     + void SaveGameAndExit()
 
@@ -95,6 +101,12 @@ class PokerGame{
     + <<event>> OnDraw Draw
 }
 
+class PokerHelpers{
++ static string Serialize(Player player)
++ static Player Deserialize(string line)
+}
+
+
 interface interfaces
 {
 IEnumerable
@@ -105,24 +117,28 @@ IComparable
 class CardCollection
 {
 # List<Card> cards;
++ CardCollection()
++ CardCollection(IEnumerable<Card> card)
 + virtual Add(Card card)
 # virtual Remove(Card card)
-+ GetEnumerator()
-+ void SortCard()
++ TransferTo(CardCollection cards)
 + CompareTo()
-+ TransferTo(CardCollection transferCard )
++ GetEnumerator()
+
 }
 
 class Player {
-+ Player()
 - Hand hand
 + string Name
 + ICard[] Hand 
 + HandType HandType
 + int wins
++ Player()
 + ICard[] Discard
-+ void GetCard(Card car)
-+ void DiscardCards(CardCollection discardPile)
++ Player(string name)
++ void GetCard(Card card)
++ void DiscardCards(Card discardPile)
++ override string ToString()
 }
 
 class Dealer
@@ -141,6 +157,7 @@ Dealer o-- PokerGame
 CardCollection o- PokerGame
 CardCollection <|-- Deck
 CardCollection <|-- Hand
+PokerGame --o PokerHelpers
 CardCollection --*  Card 
 Player ..|> IPlayer
 Card ..|> ICard
@@ -166,9 +183,19 @@ class Card {
 class Hand{
 + HandType HandType
 + Hand()
-+ int compareTo(Hand)
 + override Add()
-+ override Remove()
++ void SortHand()
++ HandType EvaluateHand()
+- bool Straight()
+- bool RoyalStraightFlush()
+- bool FourOfAKind()
+- bool FullHouse()
+- bool straightFlush()
+- bool Flush()
+- bool ThreeOfAKind()
+- bool TwoPairs()
+- bool Pair()
++ int compareTo(Hand)
 }
 
 
