@@ -51,7 +51,7 @@ namespace Poker.Lib
 
         public override string ToString()
         {
-            return $"Name: {Name} Total wins: {Wins}";
+            return $"{Name}";
         }
 
         #endregion

@@ -35,7 +35,7 @@ namespace Poker.Lib
 
 
         //Removes a Card at Index 0 
-        protected virtual void Remove(Card card)
+        protected virtual void RemoveCard(Card card)
         {
             this.cards.Remove(card);
         }
@@ -44,13 +44,12 @@ namespace Poker.Lib
         #region Methods
 
         //Cards that have been thrown and Can go back to deck.
-        public void TransferTo(CardCollection cards)
+        public void TransferTo(CardCollection cardsss)
         {
-            foreach (Card card in cards.ToList())
+            foreach (Card card in cardsss.ToList())
             {
-                this.cards.Remove(card);
+                RemoveCard(card);
             }
-
         }
 
         #endregion

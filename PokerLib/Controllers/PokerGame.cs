@@ -136,7 +136,16 @@ namespace Poker.Lib
                 dealer.GiveNewCards(player);
                 //Evalutate the new hand for each player.
                 player.Hand.EvaluateHand();
+
             }
+
+            // foreach (var item in players)
+            // {
+            //     foreach (Card card in item.Hand)
+            //     {
+            //         dealer.CollectCards(item, card);
+            //     }
+            // }
 
             //Show all the hands.
             ShowAllHands();
