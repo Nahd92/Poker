@@ -87,9 +87,13 @@ class PokerGame{
     + Pokergame()
     + PokerGame(string fileName)
     + PokerGame(string[] playerNames)
-    - CreatePlayers(string[] playerNames)
-    - SaveToFile(string FileName)
-    - LoadToFile(string fileName)
+    - void CreatePlayers(string[] playerNames)
+    - void SaveToFile(string FileName)
+    - void LoadToFile(string fileName)
+    - void CheckBestHand()
+    - List<Player> FindHighestCard()
+    - List<Player> FindHighestPair()
+    - List<Player< FindHighestThree()
     + void RunGame()
     + void SaveGameAndExit()
 
@@ -102,7 +106,6 @@ class PokerGame{
 }
 
 class PokerHelpers{
-+ static string Serialize(Player player)
 + static Player Deserialize(string line)
 }
 
@@ -110,7 +113,6 @@ class PokerHelpers{
 interface interfaces
 {
 IEnumerable
-IComparable
 }
 
 
@@ -120,9 +122,8 @@ class CardCollection
 + CardCollection()
 + CardCollection(IEnumerable<Card> card)
 + virtual Add(Card card)
-# virtual Remove(Card card)
-+ TransferTo(CardCollection cards)
-+ CompareTo()
+# virtual RemoveCard(Card card)
++ TransferToDeck(CardCollection cards, Player players)
 + GetEnumerator()
 
 }
@@ -137,6 +138,7 @@ class Player {
 + ICard[] Discard
 + Player(string name)
 + void GetCard(Card card)
++ void Win()
 + void DiscardCards(Card discardPile)
 + override string ToString()
 }
@@ -149,7 +151,7 @@ class Dealer
 + Dealer()
 + Card DealACard()
 + void GiveNewCards(Player player)
-+ void CollectCards(CardCollection discardedCards, Player player)
++ void CollectCards(CardCollection discardedCards, Player players)
 }
 
 
@@ -182,8 +184,14 @@ class Card {
 
 class Hand{
 + HandType HandType
++ List<Rank> Ranks
++ List<Rank> PairRanks
++ List<Rank> PairRanks
++ Rank ThreeRank
++ Rank FourRank
 + Hand()
-+ override Add()
++ override Add(Card card)
++ new void RemoveCard(Card card)
 + void SortHand()
 + HandType EvaluateHand()
 - bool Straight()
@@ -195,7 +203,6 @@ class Hand{
 - bool ThreeOfAKind()
 - bool TwoPairs()
 - bool Pair()
-+ int compareTo(Hand)
 }
 
 

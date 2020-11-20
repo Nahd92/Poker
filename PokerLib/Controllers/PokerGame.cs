@@ -6,53 +6,33 @@ using Poker.Lib;
 
 namespace Poker.Lib
 {
-    /// <summary>
-    /// This class is responsible of the game logic
-    /// </summary>
     public class PokerGame : IPokerGame
     {
-        #region Events
         public event OnNewDeal NewDeal;
         public event OnSelectCardsToDiscard SelectCardsToDiscard;
         public event OnRecievedReplacementCards RecievedReplacementCards;
         public event OnShowAllHands ShowAllHands;
         public event OnWinner Winner;
         public event OnDraw Draw;
-        #endregion
 
-        #region Properties
         private bool quit = false;
         private List<Player> players = new List<Player>();
         public IPlayer[] Players { get => players.ToArray(); }
 
-        #endregion
-
-        #region Constructors
-        //Load the game from a file
-        public PokerGame()
-        {
-
-        }
-
         public PokerGame(string fileName)
         {
-            //Loads every player and score from the file given in argument
             LoadTextFile(fileName);
         }
 
         public PokerGame(string[] playerNames)
         {
-            //This Constructor creates every player given from userinterface
             CreatePlayers(playerNames);
         }
-        #endregion
 
-        #region Methods
 
-        //Creates every player passed in from arguments. 
+
         private void CreatePlayers(string[] playerNames)
         {
-            // If playersNames is empty, throw a exception else create players
             if (playerNames.Length == 0)
             {
                 throw new Exception("Cannot create players, no name was given, Try Again!");
@@ -68,97 +48,196 @@ namespace Poker.Lib
         private void SaveToFile(string fileName)
         {
             var stream = File.Open(fileName, FileMode.Create);
-            TextWriter writer = new StreamWriter(stream);
-            foreach (var player in players)
-            {
-                writer.WriteLine(PokerHelpers.Serialize(player));
-            }
-            writer.Close();
+            using (var writer = new StreamWriter(stream))
+                foreach (var player in players)
+                {
+                    writer.WriteLine(player);
+                }
         }
         private void LoadTextFile(string fileName)
         {
             var stream = File.Open(fileName, FileMode.OpenOrCreate);
-            TextReader reader = new StreamReader(stream);
             string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                players.Add(PokerHelpers.Deserialize(line));
-            }
-            reader.Close();
+            using (var reader = new StreamReader(stream))
+                while ((line = reader.ReadLine()) != null)
+                {
+                    players.Add(PokerHelpers.Deserialize(line));
+                }
         }
 
         public void Exit()
         {
-            //Sets quit to true (I might not need this)
-            quit = true;
-            // Quit the Console
             Environment.Exit(0);
         }
 
 
         public void RunGame()
         {
-            //Creates the deck and shuffle the cards
-            var deck = new Deck();
-            //  a new dealer
-            var dealer = new Dealer();
-
-            //Userinterfaces - DealNewCard
-            NewDeal();
-
-            // All the players get 5 cards each.
-            foreach (var player in players)
+            while (!quit)
             {
-                //Get 5 cards      
-                dealer.GetHand(player);
-                //Player sort hand by Rank
-                player.Hand.SortHand();
-                //Evaluate the present handtype
-                player.Hand.EvaluateHand();
+                var deck = new Deck();
+                var dealer = new Dealer();
+                NewDeal();
 
-            }
-            //Show all the cards for user
-            ShowAllHands();
-            Console.ReadKey();
-
-            //Every player get the chance to select a card to discard
-            foreach (var player in players)
-            {
-                // Player selects cards to be discarded. 
-                SelectCardsToDiscard(player);
-                //If theres any cards in player.Discard
-                foreach (Card card in player.Discard)
+                foreach (var player in players)
                 {
-                    //Player discard each card thats in player.Discard
-                    player.DiscardCard(card);
+                    dealer.GetHand(player);
+                    player.Hand.SortHand();
+                    player.Hand.EvaluateHand();
                 }
-                //IF playershand count is lesser than 5, give new cards.
-                dealer.GiveNewCards(player);
-                //Evalutate the new hand for each player.
-                player.Hand.EvaluateHand();
+                foreach (var player in players)
+                {
+                    SelectCardsToDiscard(player);
+                    foreach (Card card in player.Discard)
+                    {
+                        player.DiscardCard(card);
+                    }
+                    dealer.GiveNewCards(player);
+                    player.Hand.SortHand();
+                    player.Hand.EvaluateHand();
+                    RecievedReplacementCards(player);
+                }
 
+                ShowAllHands();
+                CheckBestHand();
+
+                foreach (Player player in players)
+                {
+                    dealer.CollectCards(player.Hand, player);
+                }
             }
-
-            // foreach (var item in players)
-            // {
-            //     foreach (Card card in item.Hand)
-            //     {
-            //         dealer.CollectCards(item, card);
-            //     }
-            // }
-
-            //Show all the hands.
-            ShowAllHands();
-
-
-
-
-            Draw(players.ToArray());
-
-
-
         }
 
+        private void CheckBestHand()
+        {
+            List<Player> HighestHand = new List<Player>();
+            HandType HighestHandValue = HandType.HighCard;
+            foreach (var player in players)
+            {
+                if ((int)player.Hand.HandType > (int)HighestHandValue)
+                {
+                    HighestHandValue = player.Hand.HandType;
+                    HighestHand.Clear();
+                }
+                if ((int)player.Hand.HandType >= (int)HighestHandValue)
+                {
+                    HighestHand.Add(player);
+                }
+            }
+            if (HighestHand.Count == 1)
+            {
+                HighestHand[0].Win();
+                Winner(HighestHand[0]);
+            }
+            else
+            {
+
+                if (HighestHandValue == HandType.HighCard)
+                {
+                    HighestHand = FindHighestCard(HighestHand);
+                }
+                if (HighestHandValue == HandType.Pair)
+                {
+                    HighestHand = FindHighestPair(HighestHand);
+                }
+                else if (HighestHandValue == HandType.TwoPairs)
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        Rank highestRank = HighestHand.Select(player => player.Hand.PairRanks[i]).Max();
+                        HighestHand = HighestHand.Where(player => player.Hand.PairRanks[i] == highestRank).ToList();
+                        if (HighestHand.Count == 1) break;
+                    }
+                    if (HighestHand.Count > 1)
+                    {
+                        HighestHand = FindHighestCard(HighestHand);
+                    }
+                }
+                else if (HighestHandValue == HandType.ThreeOfAKind)
+                {
+                    HighestHand = FindHighestThree(HighestHand);
+                }
+                else if (HighestHandValue == HandType.Straight)
+                {
+                    HighestHand = FindHighestCard(HighestHand);
+                }
+                else if (HighestHandValue == HandType.Flush)
+                {
+                    HighestHand = FindHighestCard(HighestHand);
+                }
+                else if (HighestHandValue == HandType.FullHouse)
+                {
+                    HighestHand = FindHighestThree(HighestHand);
+                    if (HighestHand.Count > 1)
+                    {
+                        HighestHand = FindHighestPair(HighestHand);
+                    }
+                }
+                else if (HighestHandValue == HandType.FourOfAKind)
+                {
+                    Rank highestRank = HighestHand.Select(player => player.Hand.ThreeRank).Max();
+                    HighestHand = players.Where(player => player.Hand.ThreeRank == highestRank).ToList();
+                    if (HighestHand.Count > 1)
+                    {
+                        HighestHand = FindHighestCard(HighestHand);
+                    }
+                }
+                else if (HighestHandValue == HandType.StraightFlush)
+                {
+                    HighestHand = FindHighestCard(HighestHand);
+                }
+                else if (HighestHandValue == HandType.RoyalStraightFlush)
+                {
+                    // Will be a draw
+                }
+                foreach (var player in players)
+                {
+                    if (HighestHand.Count == 1)
+                    {
+                        HighestHand[0].Win();
+                        Winner(HighestHand[0]);
+                    }
+                    else
+                    {
+                        Draw(HighestHand.ToArray());
+                    }
+                }
+
+            }
+        }
+
+        private List<Player> FindHighestCard(List<Player> players)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                Rank highest = players.Select(player => player.Hand.Ranks[i]).Max();
+                players = players.Where(player => player.Hand.Ranks[i] == highest).ToList();
+                if (players.Count == 1) break;
+            }
+            return players;
+        }
+
+        private List<Player> FindHighestPair(List<Player> players)
+        {
+            Rank highestRank = players.Select(player => player.Hand.PairRanks.First()).Max();
+            players = players.Where(player => player.Hand.PairRanks.First() == highestRank).ToList();
+            if (players.Count > 1)
+            {
+                players = FindHighestCard(players);
+            }
+            return players;
+        }
+
+        private List<Player> FindHighestThree(List<Player> players)
+        {
+            Rank highestRank = players.Select(player => player.Hand.ThreeRank).Max();
+            players = players.Where(player => player.Hand.ThreeRank == highestRank).ToList();
+            if (players.Count > 1)
+            {
+                players = FindHighestCard(players);
+            }
+            return players;
+        }
 
         public void SaveGameAndExit(string fileName)
         {
@@ -168,6 +247,5 @@ namespace Poker.Lib
             Exit();
         }
 
-        #endregion
     }
 }

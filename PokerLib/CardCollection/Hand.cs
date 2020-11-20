@@ -1,41 +1,30 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Poker.Lib
 {
-
-    public class Hand : CardCollection, IComparable<Hand>
+    public class Hand : CardCollection
     {
-
-        #region Properties
         public HandType HandType { get; set; }
-        private Hand hand { get; set; }
-        #endregion
-
-        #region Constructors
-
-
-
-        public Hand(List<Card> card)
-        {
-            if (cards.Count != 5)
-            {
-                throw new Exception("Invalid amount of cards");
-            }
-            cards = card;
-        }
-        #endregion
+        public List<Rank> Ranks { get; private set; }
+        public List<Rank> PairRanks { get; private set; }
+        public Rank ThreeRank { get; private set; }
+        public Rank FourRank { get; private set; }
 
         public Hand()
         {
 
         }
-        #region Methods
-        public override void Add(Card card)
+
+        public override void AddCard(Card card)
         {
             cards.Add(card);
+        }
+
+        new public void RemoveCard(Card card)
+        {
+            base.RemoveCard(card);
         }
 
         public void SortHand()
@@ -43,55 +32,83 @@ namespace Poker.Lib
             cards = cards.OrderBy(x => (int)x.Rank).ToList();
         }
 
-
         public HandType EvaluateHand()
         {
-            //gets number of each suit on hand
+            HandType handType;
             if (RoyalStraightFlush())
-
-                return HandType = HandType.RoyalStraightFlush;
+                handType = HandType.RoyalStraightFlush;
             else if (FourOfAKind())
-                return HandType = HandType.FourOfAKind;
+                handType = HandType.FourOfAKind;
             else if (FullHouse())
-                return HandType = HandType.FullHouse;
+                handType = HandType.FullHouse;
             else if (StraightFlush())
-                return HandType = HandType.StraightFlush;
+                handType = HandType.StraightFlush;
             else if (Flush())
-                return HandType = HandType.Flush;
+                handType = HandType.Flush;
             else if (Straight())
-                return HandType = HandType.Straight;
+                handType = HandType.Straight;
             else if (ThreeOfAKind())
-                return HandType = HandType.ThreeOfAKind;
+                handType = HandType.ThreeOfAKind;
             else if (TwoPairs())
-                return HandType = HandType.TwoPairs;
+                handType = HandType.TwoPairs;
             else if (Pair())
-                return HandType = HandType.Pair;
+                handType = HandType.Pair;
             else
             {
-                return HandType = HandType.HighCard;
+                handType = HandType.HighCard;
             }
+
+            Ranks = cards.Select(card => card.Rank)
+                    .OrderBy(r => r).ToList();
+
+            if (handType == HandType.Pair || handType == HandType.TwoPairs || handType == HandType.FullHouse)
+            {
+                PairRanks = cards.GroupBy(card => card.Rank)
+                            .Where(group => group.Count() == 2)
+                            .Select(group => group.Key)
+                            .OrderByDescending(x => x).ToList();
+            }
+            if (handType == HandType.ThreeOfAKind || handType == HandType.FullHouse)
+            {
+                ThreeRank = cards.GroupBy(card => card.Rank)
+                            .Where(group => group.Count() == 3)
+                            .Select(group => group.Key).First();
+            }
+            if (handType == HandType.FourOfAKind)
+            {
+                FourRank = cards.GroupBy(card => card.Rank)
+                           .Where(group => group.Count() == 4)
+                           .Select(group => group.Key).First();
+            }
+
+            HandType = handType;
+            return handType;
         }
-
-
 
         private bool Straight()
         {
             var aceHigh = cards.Select(c => (int)c.Rank).OrderBy(x => x).ToArray();
             var aceLow = aceHigh.Select(x => x == 14 ? 1 : x).ToArray();
 
-            return new[] { aceHigh, aceLow }.Any(cs => cs.Skip(1).Zip(cs, (c1, c0) => c1 - c0).All(x => x == 1));
+            return new[] { aceHigh, aceLow }.
+                    Any(cs => cs
+                    .Skip(1)
+                    .Zip(cs, (c1, c0) => c1 - c0)
+                    .All(x => x == 1));
         }
         private bool RoyalStraightFlush()
         {
-            var firstIsTen = cards.Select(c => (int)c.Rank).Min() == 10;
-            return firstIsTen && this.StraightFlush();
+            var firstCardIsTen =
+                    cards.Select(c => (int)c.Rank)
+                    .Min() == 10;
+            return firstCardIsTen && this.StraightFlush();
         }
         private bool FourOfAKind() =>
                     cards.GroupBy(x => x.Rank)
                     .Any(x => x.Count() == 4);
+
         private bool FullHouse() =>
-                    cards
-                    .GroupBy(x => x.Rank)
+                    cards.GroupBy(x => x.Rank)
                     .Select(x => x.Count())
                     .OrderBy(x => x)
                     .SequenceEqual(new[] { 2, 3 });
@@ -104,6 +121,7 @@ namespace Poker.Lib
         private bool ThreeOfAKind() =>
                     cards.GroupBy(x => x.Rank)
                     .Any(x => x.Count() == 3);
+
         private bool TwoPairs() =>
                     cards.GroupBy(x => x.Rank)
                     .Select(x => x.Count())
@@ -114,17 +132,5 @@ namespace Poker.Lib
                     .Select(x => x.Count())
                     .OrderBy(x => x)
                     .SequenceEqual(new[] { 1, 1, 1, 2 });
-        #endregion
-
-
-        #region Interfaces
-
-        public int CompareTo(Hand other)
-        {
-            return 0;
-        }
-
-        #endregion
-
     }
 }

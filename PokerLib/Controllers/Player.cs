@@ -5,9 +5,8 @@ using System.Linq;
 
 namespace Poker.Lib
 {
-    public class Player : IPlayer, IEnumerable
+    public class Player : IPlayer, IEnumerable<Hand>
     {
-        #region Properties
         public string Name { get; set; }
         string IPlayer.Name => Name;
         public Hand Hand { get; set; }
@@ -18,54 +17,39 @@ namespace Poker.Lib
         public ICard[] Discard { get; set; }
         ICard[] IPlayer.Discard { set { Discard = value; } }
 
-        #endregion
 
-        #region Constructors
-        public Player()
-        {
 
-        }
-
-        public Player(string name)
-        {
-            this.Name = name;
-        }
-
-        #endregion
-
-        #region Methods
-        //Takes a card to hand.
         public void GetCard(Card card)
         {
-            if (Hand == null)
+            if (Hand == null || Hand.Count() == 0)
             {
                 Hand = new Hand();
+                Discard = new ICard[0];
             }
-            Hand.Add(card);
+            Hand.AddCard(card);
         }
 
         public void DiscardCard(Card discardCard)
         {
-            Hand.TransferTo(new CardCollection(new[] { discardCard }));
+            Hand.RemoveCard(discardCard);
+        }
+
+        public void Win()
+        {
+            Wins++;
         }
 
         public override string ToString()
         {
-            return $"{Name}";
+            return $"{Name} {Wins}";
         }
 
-        #endregion
-
-        #region Interfaces
         public IEnumerator GetEnumerator() => Hand.GetEnumerator();
 
-
-
-
-
-        #endregion
-
-
+        IEnumerator<Hand> IEnumerable<Hand>.GetEnumerator()
+        {
+            return (IEnumerator<Hand>)Hand.GetEnumerator();
+        }
     }
 }
 
