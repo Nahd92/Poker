@@ -175,8 +175,8 @@ namespace Poker.Lib
                 }
                 else if (HighestHandValue == HandType.FourOfAKind)
                 {
-                    Rank highestRank = HighestHand.Select(player => player.Hand.ThreeRank).Max();
-                    HighestHand = players.Where(player => player.Hand.ThreeRank == highestRank).ToList();
+                    Rank highestRank = HighestHand.Select(player => player.Hand.FourRank).Max();
+                    HighestHand = players.Where(player => player.Hand.FourRank == highestRank).ToList();
                     if (HighestHand.Count > 1)
                     {
                         HighestHand = FindHighestCard(HighestHand);
