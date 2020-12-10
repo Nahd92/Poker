@@ -106,7 +106,7 @@ namespace Poker.Lib.UnitTest
         {
             //Arrange
             string[] players = { "Dhan", "Felix" };
-            string fileName = @"savedgame.txt";
+            string fileName = "savedgame.txt";
             PokerGame game = new PokerGame(players);
             game.SaveGameAndExit(fileName);
 
@@ -148,21 +148,6 @@ namespace Poker.Lib.UnitTest
             game.CreatePlayers(players);
             //Assert
             Assert.AreEqual(2, game.Players.Length);
-        }
-
-        /// <summary>
-        /// Check if file "savedGames.txt" exist.  
-        /// </summary>
-        [Test]
-        public void CheckIfFileExist()
-        {
-            //Arrange 
-            string path = @"savedgame.txt";
-            MockPokerGame pokerGame = new MockPokerGame();
-            var fileExist = pokerGame.FileExists(path);
-            //Act
-            Assert.IsTrue(fileExist, path);
-
         }
 
         /// <summary>

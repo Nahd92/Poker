@@ -29,7 +29,8 @@ namespace Poker.Lib.UnitTest
         [Test]
         public void GameFactoryTestIfSpecificFileIsNotEmpty()
         {
-            string path = @"C:\Users\Admin\Desktop\Inlämningsuppgift2\Poker\PokerConsoleApp\savedgame.txt";
+            GameFactoryReturnsPlayersFromPokerGame();
+            string path = "savedgame.txt";
             MockPokerGame pokerGame = new MockPokerGame();
             var LoadGame = GameFactory.LoadGame(path);
             var fileExist = pokerGame.FileExists(path);
