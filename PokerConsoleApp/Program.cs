@@ -53,6 +53,7 @@ namespace Poker.ConsoleApp
                     == 'j')
                 {
                     game.SaveGameAndExit("savedgame.txt");
+                    game.Exit();
                 }
                 else
                 {

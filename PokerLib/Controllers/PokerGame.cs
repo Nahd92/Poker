@@ -66,6 +66,9 @@ namespace Poker.Lib
                 }
         }
 
+
+        //Is Tested through MockPokerGame and UnitTest in PokerGameTest
+        // PokerGameExitGamesAsItShouldAfterGameHaveBeenSaved()
         public void Exit()
         {
             Environment.Exit(0);
@@ -245,10 +248,7 @@ namespace Poker.Lib
 
         public void SaveGameAndExit(string fileName)
         {
-            //Saves to the specifik file from parameters
             SaveToFile(fileName);
-            //Exits the game
-            Exit();
         }
     }
 }
