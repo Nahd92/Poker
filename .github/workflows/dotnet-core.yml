@@ -22,7 +22,7 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test \PokerLib.UnitTest\PokerLib.UnitTest.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=\"opencover,lcov\" /p:CoverletOutput=../lcov
+      run: dotnet test --no-restore --verbosity normal
     - name: CodeCoveragePercentage
       run: ((`cat lcov.opencover.xml | sed -En "s/^  <Summary.*sequenceCoverage=\"([^\.]*)\..*$/\1/p"` >= 95))
       shell: bash
