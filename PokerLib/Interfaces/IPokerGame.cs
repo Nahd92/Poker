@@ -22,6 +22,7 @@ namespace Poker.Lib
         void Exit();
 
         void SaveGameAndExit(string fileName);
+        bool KeepPlayingOrNot();
 
         void CheckBestHand(List<Player> players);
         List<Player> FindHighestCard(List<Player> players);
