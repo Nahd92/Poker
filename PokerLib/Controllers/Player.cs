@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Poker.Lib
 {
-    public class Player : IPlayer, IEnumerable<Hand>
+    public class Player : IPlayer
     {
         public string Name { get; set; }
         string IPlayer.Name => Name;
@@ -16,9 +16,25 @@ namespace Poker.Lib
         int IPlayer.Wins => Wins;
         public ICard[] Discard { get; set; }
         ICard[] IPlayer.Discard { set { Discard = value; } }
+        private ICardCollection CardCollection { get; set; }
+        public Player()
+        {
 
+        }
 
-
+        public Player(string name, int wins)
+        {
+            this.Name = name;
+            this.Hand = new Hand();
+            this.Wins = wins;
+        }
+        public Player(string name, int wins, ICardCollection cardCollection)
+        {
+            this.Name = name;
+            this.Hand = new Hand();
+            this.Wins = wins;
+            this.CardCollection = cardCollection;
+        }
         public void GetCard(Card card)
         {
             if (Hand == null || Hand.Count() == 0)
@@ -43,13 +59,5 @@ namespace Poker.Lib
         {
             return $"{Name} {Wins}";
         }
-
-        public IEnumerator GetEnumerator() => Hand.GetEnumerator();
-
-        IEnumerator<Hand> IEnumerable<Hand>.GetEnumerator()
-        {
-            return (IEnumerator<Hand>)Hand.GetEnumerator();
-        }
     }
 }
-

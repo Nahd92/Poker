@@ -19,6 +19,10 @@ namespace Poker.Lib
 
         public override void AddCard(Card card)
         {
+            if (cards.Count >= 5)
+            {
+                throw new IndexOutOfRangeException("Too many cards, 5 is max");
+            }
             cards.Add(card);
         }
 
@@ -132,5 +136,7 @@ namespace Poker.Lib
                     .Select(x => x.Count())
                     .OrderBy(x => x)
                     .SequenceEqual(new[] { 1, 1, 1, 2 });
+
+
     }
 }

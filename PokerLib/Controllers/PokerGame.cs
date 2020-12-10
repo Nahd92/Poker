@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Poker.Lib;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("PokerLib.UnitTest")]
 
 namespace Poker.Lib
 {
@@ -14,11 +17,13 @@ namespace Poker.Lib
         public event OnShowAllHands ShowAllHands;
         public event OnWinner Winner;
         public event OnDraw Draw;
-
-        private bool quit = false;
+        private bool quit = true;
         private List<Player> players = new List<Player>();
         public IPlayer[] Players { get => players.ToArray(); }
+        public PokerGame()
+        {
 
+        }
         public PokerGame(string fileName)
         {
             LoadTextFile(fileName);
@@ -30,22 +35,18 @@ namespace Poker.Lib
         }
 
 
-
-        private void CreatePlayers(string[] playerNames)
+        internal void CreatePlayers(string[] playerNames)
         {
-            if (playerNames.Length == 0)
+            if (playerNames.Any(string.IsNullOrEmpty) || playerNames.Length == 0)
             {
-                throw new Exception("Cannot create players, no name was given, Try Again!");
+                throw new NullReferenceException("Cannot create players, no name was given, Try Again!");
             }
-            foreach (var users in playerNames)
+            foreach (string user in playerNames)
             {
-                players.Add(new Player
-                {
-                    Name = users
-                });
+                players.Add(new Player(user, 0));
             }
         }
-        private void SaveToFile(string fileName)
+        internal void SaveToFile(string fileName)
         {
             var stream = File.Open(fileName, FileMode.Create);
             using (var writer = new StreamWriter(stream))
@@ -54,7 +55,7 @@ namespace Poker.Lib
                     writer.WriteLine(player);
                 }
         }
-        private void LoadTextFile(string fileName)
+        public void LoadTextFile(string fileName)
         {
             var stream = File.Open(fileName, FileMode.OpenOrCreate);
             string line;
@@ -71,23 +72,27 @@ namespace Poker.Lib
         }
 
 
+        public bool KeepPlayingOrNot()
+        {
+            return quit = false;
+        }
+
         public void RunGame()
         {
-            while (!quit)
+            while (quit)
             {
-                var deck = new Deck();
-                var dealer = new Dealer();
+                var dealer = new Dealer(new Deck());
                 NewDeal();
 
                 foreach (var player in players)
                 {
-                    dealer.GetHand(player);
+                    dealer.Deal(player);
                     player.Hand.SortHand();
                     player.Hand.EvaluateHand();
                 }
                 foreach (var player in players)
                 {
-                    SelectCardsToDiscard(player);
+                    SelectCardsToDiscard?.Invoke(player);
                     foreach (Card card in player.Discard)
                     {
                         player.DiscardCard(card);
@@ -99,7 +104,7 @@ namespace Poker.Lib
                 }
 
                 ShowAllHands();
-                CheckBestHand();
+                CheckBestHand(players);
 
                 foreach (Player player in players)
                 {
@@ -108,7 +113,7 @@ namespace Poker.Lib
             }
         }
 
-        private void CheckBestHand()
+        public void CheckBestHand(List<Player> players)
         {
             List<Player> HighestHand = new List<Player>();
             HandType HighestHandValue = HandType.HighCard;
@@ -127,11 +132,10 @@ namespace Poker.Lib
             if (HighestHand.Count == 1)
             {
                 HighestHand[0].Win();
-                Winner(HighestHand[0]);
+                Winner?.Invoke(HighestHand[0]);
             }
             else
             {
-
                 if (HighestHandValue == HandType.HighCard)
                 {
                     HighestHand = FindHighestCard(HighestHand);
@@ -195,18 +199,18 @@ namespace Poker.Lib
                     if (HighestHand.Count == 1)
                     {
                         HighestHand[0].Win();
-                        Winner(HighestHand[0]);
+                        Winner?.Invoke(HighestHand[0]);
                     }
                     else
                     {
-                        Draw(HighestHand.ToArray());
+                        Draw?.Invoke(HighestHand.ToArray());
                     }
                 }
 
             }
         }
 
-        private List<Player> FindHighestCard(List<Player> players)
+        public List<Player> FindHighestCard(List<Player> players)
         {
             for (int i = 0; i < 5; i++)
             {
@@ -217,7 +221,7 @@ namespace Poker.Lib
             return players;
         }
 
-        private List<Player> FindHighestPair(List<Player> players)
+        public List<Player> FindHighestPair(List<Player> players)
         {
             Rank highestRank = players.Select(player => player.Hand.PairRanks.First()).Max();
             players = players.Where(player => player.Hand.PairRanks.First() == highestRank).ToList();
@@ -228,7 +232,7 @@ namespace Poker.Lib
             return players;
         }
 
-        private List<Player> FindHighestThree(List<Player> players)
+        public List<Player> FindHighestThree(List<Player> players)
         {
             Rank highestRank = players.Select(player => player.Hand.ThreeRank).Max();
             players = players.Where(player => player.Hand.ThreeRank == highestRank).ToList();
@@ -246,6 +250,5 @@ namespace Poker.Lib
             //Exits the game
             Exit();
         }
-
     }
 }

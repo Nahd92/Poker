@@ -4,21 +4,22 @@ using System.Linq;
 
 namespace Poker.Lib
 {
-    public class Dealer
+    public class Dealer : IDealer
     {
         private const int NumberOfCardsPerPlayer = 5;
-        private Deck deck { get; set; }
+        public Deck Deck { get; set; }
 
-        public Dealer()
+
+        public Dealer(Deck deck)
         {
-            deck = new Deck();
+            this.Deck = deck;
         }
 
-        public void GetHand(Player player)
+        public void Deal(Player player)
         {
             for (var i = 1; i <= NumberOfCardsPerPlayer; i++)
             {
-                player.GetCard(deck.DrawCard());
+                player.GetCard(Deck.DrawCard());
             }
         }
 
@@ -26,13 +27,13 @@ namespace Poker.Lib
         {
             while (player.Hand.Count() < NumberOfCardsPerPlayer)
             {
-                player.GetCard(deck.DrawCard());
+                player.GetCard(Deck.DrawCard());
             }
         }
 
         public void CollectCards(CardCollection card, Player players)
         {
-            card.TransferToDeck(deck, players);
+            card.TransferToDeck(Deck, players);
         }
     }
 }

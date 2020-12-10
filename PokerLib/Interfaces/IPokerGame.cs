@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Poker.Lib
 {
     public delegate void OnNewDeal();
@@ -10,6 +12,7 @@ namespace Poker.Lib
 
     public delegate void OnDraw(IPlayer[] tiedPlayers);
 
+
     public interface IPokerGame
     {
         IPlayer[] Players { get; }
@@ -19,6 +22,11 @@ namespace Poker.Lib
         void Exit();
 
         void SaveGameAndExit(string fileName);
+
+        void CheckBestHand(List<Player> players);
+        List<Player> FindHighestCard(List<Player> players);
+        List<Player> FindHighestPair(List<Player> players);
+        List<Player> FindHighestThree(List<Player> players);
 
         event OnNewDeal NewDeal;
 

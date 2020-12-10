@@ -5,10 +5,9 @@ using System.Linq;
 
 namespace Poker.Lib
 {
-    public class CardCollection : IEnumerable<Card>
+    public class CardCollection : ICardCollection, IEnumerable<Card>
     {
         protected List<Card> cards = new List<Card>();
-
 
         public virtual void AddCard(Card card)
         {
@@ -32,6 +31,7 @@ namespace Poker.Lib
                 RemoveCard(card);
             }
         }
+
 
         public IEnumerator GetEnumerator() => cards.GetEnumerator();
 

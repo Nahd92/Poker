@@ -10,7 +10,7 @@ namespace Poker.Lib
             var Game = new PokerGame(playerNames);
             return Game;
         }
-
+        //Game Contains a list of players
         public static IPokerGame LoadGame(string fileName)
         {
             var LoadTheGame = new PokerGame(fileName);
