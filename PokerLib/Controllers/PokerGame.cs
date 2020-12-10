@@ -92,7 +92,7 @@ namespace Poker.Lib
                 }
                 foreach (var player in players)
                 {
-                    SelectCardsToDiscard?.Invoke(player);
+                    SelectCardsToDiscard(player);
                     foreach (Card card in player.Discard)
                     {
                         player.DiscardCard(card);
