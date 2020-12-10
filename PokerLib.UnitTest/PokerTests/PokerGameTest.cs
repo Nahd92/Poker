@@ -86,7 +86,7 @@ namespace Poker.Lib.UnitTest
         {
             //Arrange
             string[] players = { "Dhan", "Felix" };
-            string fileName = @"savedgame.txt";
+            string fileName = "savedgame.txt";
             PokerGame game = new PokerGame();
             game.CreatePlayers(players);
             game.SaveToFile(fileName);

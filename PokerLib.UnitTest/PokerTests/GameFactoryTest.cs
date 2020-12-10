@@ -1,3 +1,4 @@
+using System.IO;
 using NUnit.Framework;
 
 
@@ -29,14 +30,16 @@ namespace Poker.Lib.UnitTest
         [Test]
         public void GameFactoryTestIfSpecificFileIsNotEmpty()
         {
-            GameFactoryReturnsPlayersFromPokerGame();
-            string path = "savedgame.txt";
-            MockPokerGame pokerGame = new MockPokerGame();
-            var LoadGame = GameFactory.LoadGame(path);
-            var fileExist = pokerGame.FileExists(path);
+            string fileName = "savedGame.txt";
+            using (StreamWriter writer = new StreamWriter(fileName))
+            {
+                writer.WriteLine("Dhan 0");
+                writer.WriteLine("Erik 0");
+            }
+
+            var LoadGame = GameFactory.LoadGame(fileName);
 
             Assert.IsNotEmpty(LoadGame.Players);
-            Assert.IsTrue(fileExist, path);
         }
     }
 }
