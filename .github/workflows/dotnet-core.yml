@@ -24,6 +24,6 @@ jobs:
     - name: Test
       run: dotnet test --no-restore --verbosity normal
     - name: CodeCoveragePercentage
-      run: ((`cat lcov.opencover.xml | sed -En "s/^  <Summary.*sequenceCoverage=\"([0-9]+\.?[0-9]*)|([0-9]*\.[0-9]+)"` > 95.00))
+      run: ((`cat lcov.opencover.xml | sed -En "s/^  <Summary.*sequenceCoverage=\"([^\.]*)\..*$/\1/p"` >= 95.00))
       shell: bash
       
