@@ -1,6 +1,4 @@
-using Moq;
 using NUnit.Framework;
-using PokerLib.UnitTest.Mocks;
 using System.Collections.Generic;
 using System.Linq;
 

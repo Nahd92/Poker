@@ -56,6 +56,7 @@ namespace Poker.Lib.UnitTest
 
             //Assert
             dealer.GiveNewCards(player);
+            Assert.AreEqual(5, player.Hand.Count());
             CollectionAssert.AreNotEqual(cards, player.Hand);
         }
 

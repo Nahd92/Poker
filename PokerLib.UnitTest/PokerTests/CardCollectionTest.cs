@@ -47,7 +47,7 @@ namespace Poker.Lib.UnitTest
         }
 
         /// <summary>
-        /// Transfer Cards to deck again.   .<!--EJ KLAR-->
+        /// Transfer Cards to deck again.  
         /// </summary>
         [Test]
         public void CanTransferAllCardsToDeck()
@@ -82,6 +82,7 @@ namespace Poker.Lib.UnitTest
 
             //Assert
             Assert.AreEqual(2, players.Discard.Length);
+            Assert.AreEqual(3, players.Hand.Count());
         }
     }
 }

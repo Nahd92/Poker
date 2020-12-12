@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Moq;
 using NUnit.Framework;
 
 namespace Poker.Lib.UnitTest
@@ -331,7 +330,7 @@ namespace Poker.Lib.UnitTest
         }
 
         /// <summary>
-        /// Find the HigestThree   <!-- Ej klar--->
+        /// Find the HigestThree  
         /// </summary>
         [Test]
         public void IfPlayersHaveSamePair()
@@ -380,7 +379,7 @@ namespace Poker.Lib.UnitTest
 
 
         /// <summary>
-        /// Find the HigestThree   <!-- Ej klar--->
+        /// Find the HigestThree   
         /// </summary>
         [Test]
         public void IfBothPlayersHaveTwoPairs()
@@ -426,7 +425,7 @@ namespace Poker.Lib.UnitTest
             Assert.Greater(player.Wins, playerTwo.Wins);
         }
         /// <summary>
-        /// Find the FillHouse   <!-- Ej klar--->
+        /// Find the FillHouse   
         /// </summary>
         [Test]
         public void IfBothPlayersHaveFullHouse()
@@ -473,7 +472,7 @@ namespace Poker.Lib.UnitTest
         }
 
         /// <summary>
-        /// Find the FillHouse   <!-- Ej klar--->
+        /// Find the FillHouse   
         /// </summary>
         [Test]
         public void IfBothPlayersHaveStraight()
@@ -523,7 +522,7 @@ namespace Poker.Lib.UnitTest
 
 
         /// <summary>
-        /// Find the FillHouse   <!-- Ej klar--->
+        /// Find the FillHouse  
         /// </summary>
         [Test]
         public void IfBothPlayersHaveStraightFlush()
@@ -573,7 +572,7 @@ namespace Poker.Lib.UnitTest
 
 
         /// <summary>
-        /// Find the FillHouse   <!-- Ej klar--->
+        /// Find the FillHouse 
         /// </summary>
         [Test]
         public void IfBothPlayersHaveRoyalStraightFlush()
@@ -622,7 +621,7 @@ namespace Poker.Lib.UnitTest
         }
 
         /// <summary>
-        /// Find the HighestCard if both have Flush   <!-- Ej klar--->
+        /// Find the HighestCard if both have Flush   
         /// </summary>
         [Test]
         public void IfBothPlayersHaveFlush()
@@ -670,7 +669,7 @@ namespace Poker.Lib.UnitTest
             }
         }
         /// <summary>
-        /// Find the FillHouse   <!-- Ej klar--->
+        /// Find the FillHouse  
         /// </summary>
         [Test]
         public void IfBothPlayersHaveFullHouseAndCheckHighestHighCard()
@@ -720,7 +719,7 @@ namespace Poker.Lib.UnitTest
 
 
         /// <summary>
-        /// Find the FourOfAKind   <!-- Ej klar--->
+        /// Find the FourOfAKind  
         /// </summary>
         [Test]
         public void IfBothPlayersHaveFourOfAKind()
@@ -774,7 +773,7 @@ namespace Poker.Lib.UnitTest
 
 
         /// <summary>
-        /// Find the HigestThree   <!-- Ej klar--->
+        /// Find the HigestThree   
         /// </summary>
         [Test]
         public void IfBothPlayersHaveThreeofSameCards()
@@ -819,7 +818,7 @@ namespace Poker.Lib.UnitTest
 
 
         /// <summary>
-        /// Test if Game knows who's the winner <!-- EJ klar-->
+        /// Test if Game knows who's the winner 
         /// </summary>
         [Test]
         public void PokerGameKnowsTheWinner()

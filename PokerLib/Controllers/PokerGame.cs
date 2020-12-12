@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Poker.Lib;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("PokerLib.UnitTest")]
