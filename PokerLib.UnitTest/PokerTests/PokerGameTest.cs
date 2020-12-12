@@ -9,7 +9,6 @@ namespace Poker.Lib.UnitTest
     {
         private PokerGame game;
 
-
         [SetUp]
         public void Setup()
         {
@@ -29,8 +28,8 @@ namespace Poker.Lib.UnitTest
         /// <summary>
         /// Check if Events is working and RunGame works proper
         /// </summary>
-        [Test]
-        public void PokerGameHaveWorkingEvents()
+        [Test, Sequential]
+        public void PokerGameHaveWorkingEvents([Values(0, 1, 2, 3, 4)] int i)
         {
             PokerGame game = new PokerGame(new string[2] { "PlayerOne", "PlayerTwo" });
             int count = 0;
@@ -50,8 +49,8 @@ namespace Poker.Lib.UnitTest
             }
             void IfSelectCardsToDiscardEventIsWorking(IPlayer player)
             {
-                player.Discard = new ICard[] { player.Hand[0] };
-                player.Discard = new ICard[] { player.Hand[0] };
+                player.Discard = new ICard[] { player.Hand[i] };
+                player.Discard = new ICard[] { player.Hand[i] };
                 eventsIsWorking = true;
                 count++;
                 game.KeepPlayingOrNot();
@@ -522,7 +521,7 @@ namespace Poker.Lib.UnitTest
 
 
         /// <summary>
-        /// Find the FillHouse  
+        /// Check IfBothPlayersHaveStraightFlush 
         /// </summary>
         [Test]
         public void IfBothPlayersHaveStraightFlush()
@@ -572,7 +571,7 @@ namespace Poker.Lib.UnitTest
 
 
         /// <summary>
-        /// Find the FillHouse 
+        /// Check IfBothPlayersHaveRoyalStraightFlush
         /// </summary>
         [Test]
         public void IfBothPlayersHaveRoyalStraightFlush()
@@ -669,7 +668,7 @@ namespace Poker.Lib.UnitTest
             }
         }
         /// <summary>
-        /// Find the FillHouse  
+        /// Check if IfBothPlayersHaveFullHouseAndCheckHighestHighCard 
         /// </summary>
         [Test]
         public void IfBothPlayersHaveFullHouseAndCheckHighestHighCard()
@@ -699,6 +698,7 @@ namespace Poker.Lib.UnitTest
             }
             foreach (Card cards in CardForSecondPlayer)
             {
+
                 playerTwo.GetCard(cards);
             }
 
@@ -714,12 +714,13 @@ namespace Poker.Lib.UnitTest
             }
             game.CheckBestHand(players);
             Assert.GreaterOrEqual(playerTwo.Hand.HandType, player.Hand.HandType);
+            Assert.Greater(playerTwo.Wins, player.Wins);
         }
 
 
 
         /// <summary>
-        /// Find the FourOfAKind  
+        /// Find if IfBothPlayersHaveFourOfAKind  
         /// </summary>
         [Test]
         public void IfBothPlayersHaveFourOfAKind()
@@ -769,11 +770,8 @@ namespace Poker.Lib.UnitTest
             }
         }
 
-
-
-
         /// <summary>
-        /// Find the HigestThree   
+        /// Find the IfBothPlayersHaveThreeofSameCards  
         /// </summary>
         [Test]
         public void IfBothPlayersHaveThreeofSameCards()
@@ -816,7 +814,6 @@ namespace Poker.Lib.UnitTest
             Assert.Greater(playerTwo.Wins, player.Wins);
         }
 
-
         /// <summary>
         /// Test if Game knows who's the winner 
         /// </summary>
@@ -853,7 +850,6 @@ namespace Poker.Lib.UnitTest
             {
                 playerTwo.GetCard(cards);
             }
-
             foreach (Player playe in players)
             {
                 playe.Hand.EvaluateHand();
@@ -877,7 +873,6 @@ namespace Poker.Lib.UnitTest
             PokerGame game = new PokerGame(players.ToArray());
 
             Assert.AreEqual(2, players.Count);
-
             players.Add(nameLess);
 
             var ex = Assert.Throws<NullReferenceException>(
@@ -885,7 +880,6 @@ namespace Poker.Lib.UnitTest
                  );
 
             Assert.AreEqual("Cannot create players, no name was given, Try Again!", ex.Message);
-
         }
     }
 }

@@ -85,7 +85,6 @@ namespace Poker.Lib
             {
                 var dealer = new Dealer(new Deck());
                 NewDeal();
-
                 foreach (var player in players)
                 {
                     dealer.Deal(player);
