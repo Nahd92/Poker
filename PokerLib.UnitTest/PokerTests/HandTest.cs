@@ -209,23 +209,36 @@ namespace Poker.Lib.UnitTest
             //Assert
             Assert.AreEqual(expected, actual);
         }
+
+
         /// <summary>
         /// Make sure the Cards in Hand can be FullHouse
         /// </summary>
-        [Test]
-        public void HandCanBeFullHouse()
+        [Test, Combinatorial]
+        public void HandCanBeFullHouse([Values(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)] int rankOne, [Values(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)] int rankTwo)
         {
             //Arrange
-            var hand = new Hand();
-            hand.AddCard(new Card(Rank.Two, Suite.Clubs));
-            hand.AddCard(new Card(Rank.Two, Suite.Hearts));
-            hand.AddCard(new Card(Rank.Ace, Suite.Diamonds));
-            hand.AddCard(new Card(Rank.Ace, Suite.Clubs));
-            hand.AddCard(new Card(Rank.Ace, Suite.Spades));
+            var player = new Player("Dhan", 0);
             //Act
+
+            for (int i = 0; i < 5; i++)
+            {
+                Assume.That(rankOne != rankTwo);
+
+                if (i < 3)
+                {
+                    player.GetCard(new Card((Rank)rankOne, (Suite)0));
+                }
+                else
+                {
+                    player.GetCard(new Card((Rank)rankTwo, (Suite)0));
+                }
+            }
+
+
             var expected = HandType.FullHouse;
             //When
-            var actual = hand.EvaluateHand();
+            var actual = player.Hand.EvaluateHand();
             //Assert
             Assert.AreEqual(expected, actual);
         }
